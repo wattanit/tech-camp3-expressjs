@@ -1,0 +1,271 @@
+swagger: "2.0"
+info:
+  title: Dog Cat Matcher API
+  description: Test server of Dog Cat Matcher project
+  version: 0.1.0
+
+basePath: /api
+schemes:
+  - http
+
+paths:
+  /users:
+    get:
+      summary: Return a list of all users
+      responses:
+        200:
+          description: A list of user
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                userName:
+                  type: string
+                contact:
+                  type: string
+
+  /user:
+    get:
+      summary: Return a user information
+      parameters:
+        - in: path
+          name: userId
+          type: string
+          required: true
+          description: userId
+      responses:
+        200:
+          description: A User object
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              contact:
+                type: string
+        401:
+          description: Unauthorised
+        404:
+          description: A user with the specified ID was not found
+        default:
+          description: Unexpected error
+    post:
+      summary: Create a new user
+      parameters:
+        - in: body
+          name: user
+          description: A User information object
+          schema:
+            type: object
+            required:
+              - userName
+              - password
+            properties:
+              userName:
+                type: string
+              password:
+                type: string
+              contact:
+                type: string
+      responses:
+        201:
+          description: Created
+        403:
+          description: Username already existed
+        default:
+          description: Unexpected error
+    put:
+      summary: Update a user
+      parameters:
+        - in: body
+          name: user
+          description: A User information object
+          schema:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: string
+              userName:
+                type: string
+              password:
+                type: string
+              contact:
+                type: string
+      responses:
+        200:
+          description: Success
+        401:
+          description: Unauthorised
+        404:
+          description: User with the specified ID was not found
+        default:
+          description: Unexpected error
+
+  /login:
+    post:
+      summary: Basic login endpoint
+      parameters:
+        - in: body
+          name: login
+          description: Login credential object
+          schema:
+            type: object
+            properties:
+              userName:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Token object
+          schema:
+            type: object
+            properties:
+              userId:
+                type: string
+              token:
+                type: string
+        401:
+          description: Unauthorised
+        default:
+          description: Unexpected error
+
+  /logout:
+    post:
+      summary: Basic logout endpoint
+      parameters:
+        - in: body
+          name: logout
+          description: Logout credential object
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+      responses:
+        200:
+          description: Success
+        401:
+          description: Unauthorised
+        default:
+          description: Unexptected error
+
+  /animals:
+    get:
+      summary: Return a list of all animals
+      responses:
+        200:
+          description: A list of animal
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Animal"
+
+  /animal:
+    get:
+      summary: Return an animal information by Id
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+          description: animalId
+      responses:
+        200:
+          description: An animal object
+          schema:
+            $ref: "#/definitions/Animal"
+        401:
+          description: Unauthorised
+        404:
+          description: Animal with specified ID was not found
+        default:
+          description: Unexpected error
+    post:
+      summary: Add a new animal
+      parameters:
+        - in: body
+          name: animal
+          description: An animal information object
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              desciption:
+                type: string
+      responses:
+        201:
+          description: Created
+        401:
+          description: Unauthorised
+        default:
+          description: Unexpected error
+    put:
+      summary: Update an animal object
+      parameters:
+        - in: body
+          name: animal
+          description: An animal object
+          schema:
+            $ref: "#/definitions/Animal"
+      responses:
+        200:
+          description: Success
+        401:
+          description: Unauthorised
+        404:
+          description: Animal with specified ID was not found
+        default:
+          description: Unexpected error
+
+  /uploadPhoto:
+    post:
+      summary: Upload an animal photo
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: photo
+          type: file
+          description: A photo to upload
+          required: true
+        - in: formData
+          name: id
+          type: string
+          description: Animal ID to upload to
+          required: true
+      responses:
+        201:
+          description: Success
+        401:
+          description: Unauthorised
+        404:
+          description: Animal with specified ID was not found
+        default:
+          description: Unexpected error
+
+
+definitions:
+  Animal:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      photoUrl:
+        type: string
+      adopted:
+        type: boolean
