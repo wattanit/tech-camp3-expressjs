@@ -4,6 +4,16 @@ import fileUpload from "express-fileupload";
 import YAML from "yamljs";
 import swaggerUi from "swagger-ui-express";
 
+import {GetUserHandler, GetUsersList, PostUserHandler, PutUserHandler} from "./APIs/User";
+import {
+    GetAnimalByIdHandler,
+    GetAnimalListHandler,
+    PostAnimalHandler,
+    PutAnimalHandler,
+    UploadAnimalPhotoHandler
+} from "./APIs/Animal";
+import {LoginHandler, LogoutHandler} from "./APIs/Authentication";
+
 //----------- Initialisation ---------------
 
 const app = express();
@@ -16,14 +26,29 @@ app.use(express.json());
 app.use(fileUpload({
     createParentPath: true,
 }))
-app.use(express.static("photos"));
+app.use("/photos", express.static("photos"));
 
 
 mongoose.connect('mongodb://localhost:27017/dogcatmatcher');
 
 //------------ API endpoints ----------------
 
-app.get("/", (req, res)=>{
+app.get("/api/users", GetUsersList);
+app.get("/api/user/:userId", GetUserHandler);
+app.post("/api/user", PostUserHandler);
+app.put("/api/user", PutUserHandler);
+
+app.post("/api/login", LoginHandler);
+app.post("/api/logout", LogoutHandler);
+
+app.get("/api/animals", GetAnimalListHandler);
+app.get("/api/animal/:id", GetAnimalByIdHandler);
+app.post("/api/animal", PostAnimalHandler);
+app.put("/api/animal", PutAnimalHandler);
+
+app.post("/api/uploadPhoto", UploadAnimalPhotoHandler);
+
+app.get("/api", (req, res)=>{
     res.send("Dog Cat Matcher API Server");
 })
 
